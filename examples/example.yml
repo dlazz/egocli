@@ -1,0 +1,145 @@
+---
+name: string
+region: string
+profile: string
+aws_access_key: string
+aws_secret_acces_key: string
+taskdefinition:
+  compatibilities: string
+  family: string
+  memory: int
+  networkmode: string
+  cpu: int
+  executionrolearn: string
+  placementconstraints:
+    - expression: string
+      type: string
+  requiresattributes:
+    - name: string
+      targetid: string
+      targettype: string
+      value: string
+  requirescompatibilities: 
+    - string
+  revision: int64
+  status: string
+  taskdefinitionarn: string
+  taskrolearn: string
+  volumes:
+    - host: 
+        sourcepath: string
+      name: string
+  containerdefinitions:
+    - name: string
+      image: string
+      cpu: int64
+      memory: int64
+      essential: bool
+      portmappings:
+        - containerport: int64
+          protocol: string
+      command:
+        - string
+      disablenetworking: bool
+      dnssearchdomains:
+        - string
+      dnsservers:
+        - string
+      dockerlabels:
+        string: string
+      dockersecurityoptions:
+        - string
+      entrypoint:
+        - string
+      environment:
+        - name: string
+          value: string
+      extrahosts:
+        - hostname: string
+          ipaddress: string
+      healthcheck:
+        - command:
+           - string
+          interval: int
+          retries: int
+          startperiod: int
+          timeout: int
+      hostname: string
+      links:
+        - string
+      linuxparameters:
+        capabilities:
+          - add:
+              - string
+            drop:
+              - string
+        devices:
+          - containerpath: string
+            hostpath: string
+            permissions:
+              - string
+        initprocessenabled: bool
+        sharedmemorysize: int
+        tmpfs:
+          - containerpath: string
+            mountoptions:
+              - string
+            size: int64
+      logconfiguration:
+        logdriver: string
+        options:
+          string: string
+      memoryreservation: int
+      mountpoints:
+        - containerpath: string
+          readonly: bool
+          sourceVolume: string
+      privileged: bool
+      readonlyrootfilesystem: bool
+      repositorycredentials:
+        credentialsparameter: string
+      ulimits:
+        - hardlimit: int
+          name: string
+          softlimit: int
+      user: string
+      volumesfrom:
+      workingdirectory: string
+service:
+    servicename: string
+    cluster: string
+    deploymentconfiguration: string
+    desiredcount: int
+    healthcheckgraceperiodseconds: int
+    launchtype: string
+    loadbalancers:
+      - containername: string
+        containerport: int
+        loadbalancername: string
+        targetgrouparn: string
+    networkconfiguration:
+       awsvpcconfiguration:
+        assignpublicip: string
+        securitygroups:
+          - string
+        subnets: 
+          - string
+    placementconstraints:
+      expression: string
+      type: string
+    placementstrategy:
+      field: string
+      type: string
+    platformversion: string
+    role: string
+    schedulingstrategy: string
+    serviceregistries:
+      - containername: string
+        containerport: int
+        port: int
+        registryarn: string
+    taskdefinition: string
+context:
+  pro: # the context key can be everything but must be a string
+    - key: string
+      value: string
