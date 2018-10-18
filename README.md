@@ -1,7 +1,7 @@
 # Egocli
 
 Egocli is a command line tool that helps you to simplify AWS Elastic Contanier Service deploy and provisioning.
-With Egocli you can create or update a Task Configuration and an ECS Service from a yaml file.
+With Egocli you can create or update a Task Definition and an ECS Service from a yaml file.
 You can also provide different sets of parameters, grouped by context, so that you can use the same yaml to provison your infrastructure in different environments (ie. staging, qa, productions).
 With **egocli seal** command you can encrypt your secrets and securely push them on your repository, egocli will decrypt them for you while running.
 
@@ -102,7 +102,7 @@ $ ./egocli --project-file ego.yml --context pre --seal-password 1234567812345678
 
 **egocli** uses go templates. Data evaluations are delimited by "{{" "}}" and replaced evaluating environment varibles or key-value provided in egocli context.
 
-i.e. if you need to specify your fresh built docker image in your project file, you can
+i.e. if you need to specify your fresh built docker image in your project file, you can:
 
 ```sh
 # Create a new environment variable with your image tag.
@@ -158,10 +158,16 @@ When you run **egocli** using --context your template will be filled with the co
 $ ./egocli --project-file ego.yml --context production
 ```
 
+#### Create or Update ECS Services
+
+You can add your service definition in your yml file and use the `--service-behavior` parameter to create or update your service.
+By default, if you don't provide a task definition, the one just created will be used.
+If you don't use the `--service-behavior` parameter, no action will be taken.
 
 #### Encrypt secrets with egocli seal
 
 You can encrypt your secrets using `egocli seal` command and then add them to your project file:
+**The seal password must be 16, 24, or 32 bytes.**
 
 ```sh
 $ ./egocli seal --secret MySuperSecret --password S!ecretHash@----
