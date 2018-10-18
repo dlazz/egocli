@@ -1,2 +1,2 @@
 ego.yml
-examples/test.yml
+resource/ecs_test.go

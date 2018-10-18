@@ -14,6 +14,7 @@ Download and install go: https://golang.org/doc/install
 Download dependencies:
 ```bash
 $ go get github.com/aws/aws-sdk-go/aws
+$ go get gopkg.in/yaml.v2
 ```
 Download code in your gopath:
 ```

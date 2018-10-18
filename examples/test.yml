@@ -1,0 +1,54 @@
+---
+name: {{.LOGNAME}}
+region: eu-west-1
+profile: my_aws_profile
+aws_access_key: my_secret_key
+aws_secret_acces_key: my_secret_access_key
+taskdefinition:
+  compatibilities: string
+  family: harlock-test
+  memory: {{ .mySecret }}
+  networkmode: string
+  cpu: 4
+  executionrolearn: string
+  placementconstraints:
+    - expression: string
+      type: string
+  requiresattributes:
+    - name: string
+      targetid: string
+      targettype: string
+      value: string
+  requirescompatibilities: 
+    - string
+  revision: int64
+  status: string
+  taskdefinitionarn: string
+  taskrolearn: string
+  volumes:
+    - host: 
+        sourcepath: string
+      name: string
+  containerdefinitions:
+    - name: string
+      image: string
+      cpu: int64
+      memory: int64
+      essential: bool
+      portmappings:
+        - containerport: int64
+          protocol: string
+service:
+    servicename: string
+    cluster: string
+context:
+  pro:
+    - key: myKey
+      value: string
+    - key: mySecret
+      value: !seal MSpNqjyuu1ytgXKcYeXDdY59YnrgyiGZdHBn
+  pre:
+    - key: myKey
+      value: string
+    - key: mySecret
+      value: !seal MSpNqjyuu1ytgXKcYeXDdY59YnrgyiGZdHBn
