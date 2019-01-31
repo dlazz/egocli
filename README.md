@@ -194,12 +194,12 @@ $ ./egocli --project-file ego.yml --context pre --seal-password S!ecretHash@----
 
 **egocli seal** provide also a default secret key, use it only while testing.
 
-#### Decrypt secrets with egocli deseal
+#### Decrypt secrets with egocli unseal
 
-Sometimes You just need to recover a secret from an old and forgotten project file, in this case you can use `egocli deseal` command to recover it:
-**As for the seal password, also the deseal password must be 16, 24, or 32 bytes.**
+Sometimes You just need to recover a secret from an old and forgotten project file, in this case you can use `egocli unseal` command to recover it:
+**As for the seal password, also the unseal password must be 16, 24, or 32 bytes.**
 
 ```sh
-$ ./egocli deseal --secret CT7hLIw-AC_mTafLepud18ZKelLTNru-TScZ9VQ= --password S!ecretHash@----
+$ ./egocli unseal --secret CT7hLIw-AC_mTafLepud18ZKelLTNru-TScZ9VQ= --password S!ecretHash@----
 MySuperSecret
 ```

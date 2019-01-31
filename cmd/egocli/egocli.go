@@ -20,8 +20,8 @@ func main() {
 		fmt.Printf("[seal]\n")
 		seal.PrintDefaults()
 
-		fmt.Printf("[deseal]\n")
-		deseal.PrintDefaults()
+		fmt.Printf("[unseal]\n")
+		unseal.PrintDefaults()
 
 		os.Exit(0)
 	}
@@ -43,10 +43,10 @@ func main() {
 		}
 		fmt.Println(out)
 
-	case "deseal":
-		deseal.Parse(os.Args[2:])
+	case "unseal":
+		unseal.Parse(os.Args[2:])
 		if secret == "" {
-			deseal.PrintDefaults()
+			unseal.PrintDefaults()
 			os.Exit(1)
 		}
 		var out string
@@ -83,16 +83,16 @@ func main() {
 var containerImage, context, password, projectFile, serviceBehavior string
 
 var seal *flag.FlagSet
-var deseal *flag.FlagSet
+var unseal *flag.FlagSet
 var secret string
 
 func init() {
 	seal = flag.NewFlagSet("seal", flag.ExitOnError)
 	seal.StringVar(&secret, "secret", "", "Secret to encrypt")
 	seal.StringVar(&password, "password", "", "Password to use for secret encryption")
-	deseal = flag.NewFlagSet("deseal", flag.ExitOnError)
-	deseal.StringVar(&secret, "secret", "", "Encrypted secret to decrypt")
-	deseal.StringVar(&password, "password", "", "Password used for secret encryption")
+	unseal = flag.NewFlagSet("unseal", flag.ExitOnError)
+	unseal.StringVar(&secret, "secret", "", "Encrypted secret to decrypt")
+	unseal.StringVar(&password, "password", "", "Password used for secret encryption")
 	flag.StringVar(&context, "context", "", "Optional context.")
 	flag.StringVar(&projectFile, "project-file", "./ego.yml", "A YAML file describing your ecs infrastructure")
 	flag.StringVar(&serviceBehavior, "service-behavior", "none", "Possible choices: {none|create|update}")
