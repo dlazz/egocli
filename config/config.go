@@ -3,11 +3,11 @@ package config
 import (
 	"bytes"
 	"fmt"
-	"html/template"
 	"log"
 	"os"
 	"path"
 	"strings"
+	"text/template"
 
 	"github.com/dlazz/egocli/crypto"
 	"github.com/dlazz/egocli/resource"
