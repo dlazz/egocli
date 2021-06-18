@@ -18,11 +18,11 @@ $ go get gopkg.in/yaml.v2
 ```
 Download code in your gopath:
 ```
-$ git clone https://github.com/Ingordigia/egocli
+$ git clone https://github.com/dlazz/egocli
 ```
 Change directory:
 ```
-$ cd $GOPATH/github.com/Ingordigia/egocli.git
+$ cd $GOPATH/github.com/dlazz/egocli.git
 ```
 Build:
 ```bash

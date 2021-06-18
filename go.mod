@@ -1,4 +1,4 @@
-module github.com/Ingordigia/egocli
+module github.com/dlazz/egocli
 
 go 1.16
 

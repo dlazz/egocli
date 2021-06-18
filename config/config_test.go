@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Ingordigia/egocli/resource"
+	"github.com/dlazz/egocli/resource"
 )
 
 func TestParseConfigTemplate(t *testing.T) {

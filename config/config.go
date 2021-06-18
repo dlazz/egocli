@@ -9,8 +9,8 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/Ingordigia/egocli/crypto"
-	"github.com/Ingordigia/egocli/resource"
+	"github.com/dlazz/egocli/crypto"
+	"github.com/dlazz/egocli/resource"
 	yaml "gopkg.in/yaml.v2"
 )
 

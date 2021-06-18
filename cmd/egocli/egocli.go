@@ -6,9 +6,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/Ingordigia/egocli/config"
-	"github.com/Ingordigia/egocli/crypto"
-	"github.com/Ingordigia/egocli/resource"
+	"github.com/dlazz/egocli/config"
+	"github.com/dlazz/egocli/crypto"
+	"github.com/dlazz/egocli/resource"
 )
 
 func main() {
