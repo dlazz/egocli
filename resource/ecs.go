@@ -71,6 +71,9 @@ func (p *Project) Run() error {
 		if err := p.createService(); err != nil {
 			return err
 		}
+		if err := p.waitDeployment(); err != nil {
+			return err
+		}
 	case "update":
 		check, err = p.checkService()
 		if err != nil {
@@ -81,6 +84,9 @@ func (p *Project) Run() error {
 			return nil
 		}
 		if err = p.updateService(); err != nil {
+			return err
+		}
+		if err := p.waitDeployment(); err != nil {
 			return err
 		}
 	default:
@@ -167,5 +173,19 @@ func (p *Project) createService() (err error) {
 		return fmt.Errorf("Error updating Service: %s", err.Error())
 	}
 	log.Println("Service", *out.Service.ServiceName, "successfully created")
+	return nil
+}
+
+func (p *Project) waitDeployment() (err error) {
+	log.Println("Wait until service is stable")
+	input := &ecs.DescribeServicesInput{
+		Cluster:  p.Service.Cluster,
+		Services: []*string{p.Service.ServiceName},
+	}
+	err = p.Client.WaitUntilServicesStable(input)
+	if err != nil {
+		return fmt.Errorf("deployment failed: %s", err.Error())
+	}
+	log.Println("Service is stable")
 	return nil
 }
