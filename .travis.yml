@@ -1,6 +1,6 @@
 language: go
 go:
-    - "1.10"
+    - "1.16.6"
 env:
   global:
     - BUILD_GOARCH=amd64
@@ -8,9 +8,6 @@ env:
     - BUILD_GOOS=linux
     - BUILD_GOOS=darwin
     - BUILD_GOOS=windows
-install:
-    - go get github.com/aws/aws-sdk-go/aws
-    - go get gopkg.in/yaml.v2
 before_deploy:
   - GOARCH=${BUILD_GOARCH} GOOS=${BUILD_GOOS} go build -ldflags "-X main.version=${TRAVIS_TAG}" -o build/egocli cmd/egocli/egocli.go
   - tar -C build -cvzf egocli-${TRAVIS_TAG}-${BUILD_GOOS}.tar.gz .
