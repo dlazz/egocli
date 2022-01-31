@@ -2,7 +2,8 @@ package resource
 
 import (
 	"fmt"
-	"log"
+
+	"github.com/rs/zerolog/log"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -43,16 +44,16 @@ func (p *Project) Run() error {
 	// Initializes a new ECS client
 	p.newClient()
 	if p.Client == nil {
-		return fmt.Errorf("Ecs client creation failed")
+		return fmt.Errorf("ecs client creation failed")
 	}
 	// Registers the Task Definition
 	out, err := p.Client.RegisterTaskDefinition(&p.TaskDefinition)
 	if err != nil {
-		return fmt.Errorf("Error Registering Task Definition: %s", err.Error())
+		return fmt.Errorf("error Registering Task Definition: %s", err.Error())
 	}
 
 	taskDefinition := fmt.Sprintf("%s:%d", *out.TaskDefinition.Family, *out.TaskDefinition.Revision)
-	log.Println("Registered Task definition:", taskDefinition)
+	log.Info().Str("task_definition", taskDefinition).Str("task_definition_arn", *out.TaskDefinition.TaskDefinitionArn).Msg("")
 
 	if p.Service.TaskDefinition == nil {
 		p.Service.TaskDefinition = &taskDefinition
@@ -65,7 +66,7 @@ func (p *Project) Run() error {
 			return err
 		}
 		if check {
-			log.Printf("Service %s already exists, cannot be created", *p.Service.ServiceName)
+			log.Warn().Msg(fmt.Sprintf("service %s already exists, cannot be created", *p.Service.ServiceName))
 			return nil
 		}
 		if err := p.createService(); err != nil {
@@ -80,7 +81,7 @@ func (p *Project) Run() error {
 			return err
 		}
 		if !check {
-			log.Printf("Service %s doesn't exist, cannot update", *p.Service.ServiceName)
+			log.Warn().Msg(fmt.Sprintf("service %s doesn't exist, cannot update", *p.Service.ServiceName))
 			return nil
 		}
 		if err = p.updateService(); err != nil {
@@ -117,11 +118,11 @@ func (p *Project) checkService() (bool, error) {
 	var services []*string
 
 	if p.Service.Cluster == nil {
-		return false, fmt.Errorf("Cluster Name missing. 'cluster' field is manadatory")
+		return false, fmt.Errorf("cluster name missing. 'cluster' field is manadatory")
 	}
 	if p.Service.ServiceName == nil {
 		if p.Service.ServiceName == nil {
-			return false, fmt.Errorf("Service name missing. 'servicename' field is manadatory")
+			return false, fmt.Errorf("service name missing. 'servicename' field is manadatory")
 		}
 	}
 
@@ -132,7 +133,7 @@ func (p *Project) checkService() (bool, error) {
 	}
 	out, err := p.Client.DescribeServices(&input)
 	if err != nil {
-		return false, fmt.Errorf("Error searching service: %s", err.Error())
+		return false, fmt.Errorf("error searching service: %s", err.Error())
 	}
 	for _, v := range out.Services {
 		if *v.ServiceName == *p.Service.ServiceName {
@@ -154,30 +155,29 @@ func (p *Project) updateService() (err error) {
 	serivceInput.Service = p.Service.ServiceName
 	serivceInput.TaskDefinition = p.Service.TaskDefinition
 
-	out := &ecs.UpdateServiceOutput{}
-	out, err = p.Client.UpdateService(&serivceInput)
+	out, err := p.Client.UpdateService(&serivceInput)
 
 	if err != nil {
-		return fmt.Errorf("Error updating Service: %s", err.Error())
+		return fmt.Errorf("error updating Service: %s", err.Error())
 	}
-	log.Println("Service", *out.Service.ServiceName, "successfully updated")
-	log.Println("Service Status:", *out.Service.Status)
+	log.Info().Str("service", *out.Service.ServiceName).Str("status", *out.Service.Status).Str("action", "updated").Msg("")
+
 	return nil
 }
 
 func (p *Project) createService() (err error) {
-	out := &ecs.CreateServiceOutput{}
-	out, err = p.Client.CreateService(&p.Service)
+
+	out, err := p.Client.CreateService(&p.Service)
 
 	if err != nil {
-		return fmt.Errorf("Error updating Service: %s", err.Error())
+		return fmt.Errorf("error updating Service: %s", err.Error())
 	}
-	log.Println("Service", *out.Service.ServiceName, "successfully created")
+	log.Info().Str("service", *out.Service.ServiceName).Str("status", *out.Service.Status).Str("action", "created").Msg("")
 	return nil
 }
 
 func (p *Project) waitDeployment() (err error) {
-	log.Println("Wait until service is stable")
+	log.Info().Msg("wait until service is stable")
 	input := &ecs.DescribeServicesInput{
 		Cluster:  p.Service.Cluster,
 		Services: []*string{p.Service.ServiceName},
@@ -186,6 +186,6 @@ func (p *Project) waitDeployment() (err error) {
 	if err != nil {
 		return fmt.Errorf("deployment failed: %s", err.Error())
 	}
-	log.Println("Service is stable")
+	log.Info().Msg("service is stable")
 	return nil
 }

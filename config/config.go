@@ -3,11 +3,12 @@ package config
 import (
 	"bytes"
 	"fmt"
-	"log"
 	"os"
 	"path"
 	"strings"
 	"text/template"
+
+	"github.com/rs/zerolog/log"
 
 	"github.com/dlazz/egocli/crypto"
 	"github.com/dlazz/egocli/resource"
@@ -19,26 +20,28 @@ func LoadProject(c *resource.Project, path, context *string) error {
 	envs := getEnv()
 	buff, err := parseConfigTemplate(path, envs, &c.SealPassword)
 	if err != nil {
-		return fmt.Errorf("Error parsing template: %s", err.Error())
+		return fmt.Errorf("error parsing template: %v", err)
 	}
 	// if a context has been provided it is parsed
 	if *context != "" {
 		ctx := resource.Context{}
 
 		if err = yaml.Unmarshal(buff, &ctx); err != nil {
-			return fmt.Errorf("Error parsing template: %s", err.Error())
+			return fmt.Errorf("error parsing template: %v", err)
 		}
 
 		if _, ok := ctx.Context[*context]; ok {
 			envs = buildContext(&ctx, *context)
 			if buff, err = parseConfigTemplate(path, envs, &c.SealPassword); err != nil {
-				return fmt.Errorf("Error parsing template: %s", err.Error())
+				return fmt.Errorf("error parsing template: %v", err)
 			}
 		} else {
-			return fmt.Errorf("Unable to find context '%s'", *context)
+			return fmt.Errorf("unable to find context '%s'", *context)
 		}
 	}
-	yaml.Unmarshal(buff, &c)
+	if err := yaml.Unmarshal(buff, &c); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -53,7 +56,7 @@ func parseConfigTemplate(c *string, envs map[string]string, password *string) ([
 	t.ParseFiles(*c)
 
 	if err := t.Execute(&buf, envs); err != nil {
-		return buf.Bytes(), fmt.Errorf("There was an error parsing your template file: %s", err)
+		return buf.Bytes(), fmt.Errorf("there was an error parsing your template file: %s", err)
 	}
 
 	// Searching and decrypting secrets
@@ -77,12 +80,13 @@ func getEnv() map[string]string {
 
 func prepareContext(context *[]resource.KeyValue) (out map[string]string, err error) {
 	if len(*context) < 1 {
-		return nil, fmt.Errorf("Argument cannot be empty")
+		return nil, fmt.Errorf("argument cannot be empty")
 	}
 	out = make(map[string]string)
 	for _, item := range *context {
 		if _, ok := out[item.Key]; ok {
-			log.Fatalf("Duplicated entry: key %s already used", item.Key)
+			log.Error().Err(fmt.Errorf("duplicated entry: key %s already used", item.Key)).Msg("")
+			os.Exit(1)
 		}
 		out[item.Key] = item.Value
 	}
@@ -94,11 +98,13 @@ func buildContext(c *resource.Context, context string) map[string]string {
 	env := getEnv()
 	out, err := prepareContext(&in)
 	if err != nil {
-		log.Fatalf("Error parsing context: %s", err.Error())
+		log.Error().Err(err).Msg("error parsing context")
+		os.Exit(1)
 	}
 	for k, v := range out {
 		if _, ok := env[k]; ok {
-			log.Fatalf("Duplicated entry: key %s already used", env[k])
+			log.Error().Err(fmt.Errorf("duplicated entry: key %s already used", env[k])).Msg("")
+			os.Exit(1)
 		}
 		env[k] = v
 	}

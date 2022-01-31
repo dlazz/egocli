@@ -3,16 +3,23 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/dlazz/egocli/config"
 	"github.com/dlazz/egocli/crypto"
 	"github.com/dlazz/egocli/resource"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 func main() {
 	flag.Parse()
+
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+
+	if !JSONlogger {
+		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	}
 
 	if len(os.Args) < 2 {
 		flag.PrintDefaults()
@@ -39,7 +46,8 @@ func main() {
 		var out string
 		s := crypto.Secret{}
 		if err := s.Encrypt(&secret, &out, &password); err != nil {
-			log.Fatalln(fmt.Errorf("Error Encrypting string: %s", err.Error()))
+			log.Error().Err(err).Msg("error encrypting string:")
+			os.Exit(1)
 		}
 		fmt.Println(out)
 
@@ -52,7 +60,8 @@ func main() {
 		var out string
 		s := crypto.Secret{}
 		if err := s.Decrypt(&secret, &out, &password); err != nil {
-			log.Fatalln(fmt.Errorf("Error Decrypting string: %s", err.Error()))
+			log.Error().Err(err).Msg("error decrypting string")
+			os.Exit(1)
 		}
 		fmt.Println(out)
 
@@ -63,7 +72,8 @@ func main() {
 			os.Exit(1)
 		}
 		if _, err := os.Stat(projectFile); err != nil {
-			log.Fatal("Project file not found")
+			log.Error().Err(err).Msg("project file not found")
+			os.Exit(1)
 		}
 
 		project := resource.Project{}
@@ -71,20 +81,23 @@ func main() {
 		project.ServiceBehavior = serviceBehavior
 
 		if err := config.LoadProject(&project, &projectFile, &context); err != nil {
-			log.Fatalln(err)
+			log.Error().Err(err).Msg("")
+			os.Exit(1)
 		}
 
 		if err := project.Run(); err != nil {
-			log.Fatalln(err)
+			log.Error().Err(err).Msg("")
+			os.Exit(1)
 		}
 	}
 }
 
-var containerImage, context, password, projectFile, serviceBehavior string
+var context, password, projectFile, serviceBehavior string
 
 var seal *flag.FlagSet
 var unseal *flag.FlagSet
 var secret string
+var JSONlogger bool
 
 func init() {
 	seal = flag.NewFlagSet("seal", flag.ExitOnError)
@@ -97,5 +110,6 @@ func init() {
 	flag.StringVar(&projectFile, "project-file", "./ego.yml", "A YAML file describing your ecs infrastructure")
 	flag.StringVar(&serviceBehavior, "service-behavior", "none", "Possible choices: {none|create|update}")
 	flag.StringVar(&password, "seal-password", "", "Optional password used to decrypt secrets.")
+	flag.BoolVar(&JSONlogger, "log-to-json", false, "log output in json format")
 
 }
