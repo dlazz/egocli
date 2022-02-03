@@ -32,12 +32,6 @@ taskdefinition:
   containerdefinitions:
     - name: string
       image: string
-      cpu: int64
-      memory: int64
-      essential: bool
-      portmappings:
-        - containerport: int64
-          protocol: string
 service:
     servicename: string
     cluster: string

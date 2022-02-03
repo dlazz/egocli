@@ -16,9 +16,10 @@ func main() {
 	flag.Parse()
 
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	log.Logger.Output(os.Stdout)
 
 	if !JSONlogger {
-		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stdout})
 	}
 
 	if len(os.Args) < 2 {
